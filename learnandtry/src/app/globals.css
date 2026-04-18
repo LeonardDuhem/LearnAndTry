@@ -1,0 +1,86 @@
+@import "tailwindcss";
+
+/* === LearnAndTry — Design tokens === */
+:root {
+  /* Surfaces */
+  --bg-0: #0a0a0b;
+  --bg-1: #101012;
+  --bg-2: #16161a;
+  --bg-3: #1d1d22;
+  --stroke-1: #26262d;
+  --stroke-2: #33333c;
+
+  /* Text */
+  --text-1: #ededf0;
+  --text-2: #a8a8b3;
+  --text-3: #6b6b77;
+  --text-4: #45454f;
+
+  /* Brand accent */
+  --accent: oklch(0.78 0.14 265);
+  --accent-ink: #0a0a0b;
+
+  /* Semantic */
+  --success: oklch(0.74 0.17 150);
+  --danger:  oklch(0.70 0.19 25);
+  --warn:    oklch(0.78 0.15 80);
+
+  /* Fonts */
+  --font-sans: "Geist", ui-sans-serif, system-ui, -apple-system, "Helvetica Neue", Arial, sans-serif;
+  --font-mono: "Geist Mono", ui-monospace, "SF Mono", Menlo, monospace;
+}
+
+/* === Déclare les tokens à Tailwind === */
+@theme inline {
+  --color-bg-0: var(--bg-0);
+  --color-bg-1: var(--bg-1);
+  --color-bg-2: var(--bg-2);
+  --color-bg-3: var(--bg-3);
+  --color-stroke-1: var(--stroke-1);
+  --color-stroke-2: var(--stroke-2);
+  --color-text-1: var(--text-1);
+  --color-text-2: var(--text-2);
+  --color-text-3: var(--text-3);
+  --color-text-4: var(--text-4);
+  --color-accent: var(--accent);
+  --color-success: var(--success);
+  --color-danger: var(--danger);
+  --color-warn: var(--warn);
+
+  --font-sans: var(--font-sans);
+  --font-mono: var(--font-mono);
+}
+
+/* === Base === */
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background: var(--bg-0);
+  color: var(--text-1);
+  font-family: var(--font-sans);
+  font-feature-settings: "ss01", "cv11";
+  -webkit-font-smoothing: antialiased;
+  letter-spacing: -0.005em;
+}
+
+/* Fond avec points subtils (comme dans le design) */
+.app-bg::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  background-image: radial-gradient(circle at 1px 1px, rgba(255, 255, 255, 0.025) 1px, transparent 0);
+  background-size: 24px 24px;
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* Scrollbars */
+*::-webkit-scrollbar { width: 10px; height: 10px; }
+*::-webkit-scrollbar-thumb { background: #22222a; border-radius: 10px; }
+*::-webkit-scrollbar-thumb:hover { background: #2c2c36; }
+*::-webkit-scrollbar-track { background: transparent; }
