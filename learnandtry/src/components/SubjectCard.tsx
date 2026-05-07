@@ -9,6 +9,7 @@ interface SubjectCardProps {
 
 export default function SubjectCard({ subject }: SubjectCardProps) {
   const color = subjectColor(subject.hue);
+  const progress = subject.progress ?? 0;
 
   return (
     <Link
@@ -19,7 +20,6 @@ export default function SubjectCard({ subject }: SubjectCardProps) {
         border: `1px solid ${subjectMix(subject.hue, 22)}`,
       }}
     >
-      {/* Glow décoratif en coin */}
       <div
         aria-hidden
         className="absolute inset-0 pointer-events-none"
@@ -28,7 +28,6 @@ export default function SubjectCard({ subject }: SubjectCardProps) {
         }}
       />
 
-      {/* Header : chip avec couleur + menu */}
       <div className="flex items-center justify-between relative">
         <div
           className="font-mono text-[10.5px] tracking-wider uppercase px-2 py-0.5 rounded border"
@@ -43,37 +42,34 @@ export default function SubjectCard({ subject }: SubjectCardProps) {
         <MoreHorizontal size={14} className="text-text-3" />
       </div>
 
-      {/* Titre + méta */}
       <div className="flex-1 relative">
         <div className="text-base font-semibold tracking-tight text-text-1">
           {subject.name}
         </div>
         <div className="text-xs text-text-3 mt-0.5">
-          {subject.chaptersCount} chapitres
+          {subject.chaptersCount ?? 0} chapitres
         </div>
       </div>
 
-      {/* Barre de progression */}
       <div className="relative">
         <div className="flex justify-between text-[11px] mb-1.5 text-text-2">
           <span>Maîtrise</span>
           <span className="font-mono" style={{ color }}>
-            {subject.progress}%
+            {progress}%
           </span>
         </div>
         <div className="h-1 bg-bg-2 rounded overflow-hidden">
           <div
             className="h-full rounded"
-            style={{ width: `${subject.progress}%`, background: color }}
+            style={{ width: `${progress}%`, background: color }}
           />
         </div>
       </div>
 
-      {/* Footer : stats + dernière activité */}
       <div className="flex gap-3 text-[11px] text-text-3 font-mono relative">
-        <span>{subject.cardsCount} fiches</span>
+        <span>{subject.cardsCount ?? 0} fiches</span>
         <span>·</span>
-        <span>{subject.quizzesCount} QCM</span>
+        <span>{subject.quizzesCount ?? 0} QCM</span>
         {subject.lastTouched && (
           <span className="ml-auto">{subject.lastTouched}</span>
         )}

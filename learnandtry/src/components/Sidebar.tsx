@@ -2,24 +2,33 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Home, Upload, FileQuestion, FileText, Calendar, BarChart3, Search } from "lucide-react";
-import { MOCK_SUBJECTS } from "@/lib/mock-data";
+import {
+  Home, Upload, FileQuestion, FileText,
+  Calendar, BarChart3, Search
+} from "lucide-react";
+import { useAppStore } from "@/lib/store";
 import { subjectColor } from "@/lib/colors";
 
 const nav = [
-  { href: "/", label: "Accueil", icon: Home, badge: "⌘1" },
-  { href: "/import", label: "Importer", icon: Upload, badge: "⌘2" },
-  { href: "/qcm", label: "QCM en cours", icon: FileQuestion, badge: "⌘3" },
-  { href: "/fiches", label: "Fiches", icon: FileText, badge: "⌘4" },
+  { href: "/",       label: "Accueil",      icon: Home,          badge: "⌘1" },
+  { href: "/import", label: "Importer",     icon: Upload,        badge: "⌘2" },
+  { href: "/qcm",    label: "QCM en cours", icon: FileQuestion,  badge: "⌘3" },
+  { href: "/fiches", label: "Fiches",       icon: FileText,      badge: "⌘4" },
 ];
 
 const space = [
-  { href: "/planning", label: "Planning", icon: Calendar },
-  { href: "/stats", label: "Statistiques", icon: BarChart3 },
+  { href: "/planning", label: "Planning",      icon: Calendar  },
+  { href: "/stats",    label: "Statistiques",  icon: BarChart3 },
 ];
 
-export default function Sidebar() {
+interface SidebarProps {
+  userEmail: string | null;
+}
+
+export default function Sidebar({ userEmail }: SidebarProps) {
   const pathname = usePathname();
+  const subjects = useAppStore((s) => s.subjects); // ← depuis le store
+  const initials = userEmail ? userEmail.slice(0, 2).toUpperCase() : "?";
 
   return (
     <aside className="w-[248px] shrink-0 h-screen sticky top-0 border-r border-stroke-1 bg-gradient-to-b from-[#0c0c0e] to-bg-0 flex flex-col p-[14px_10px] z-10">
@@ -69,25 +78,31 @@ export default function Sidebar() {
         <span>Mes matières</span>
       </div>
       <div className="max-h-[260px] overflow-y-auto">
-        {MOCK_SUBJECTS.map((s) => (
-          <Link
-            key={s.id}
-            href={`/matieres/${s.id}`}
-            className="flex items-center gap-2.5 h-7 px-2.5 mx-1 my-px rounded-md text-[12.5px] text-text-2 hover:bg-bg-2 hover:text-text-1 transition-colors"
-          >
-            <span
-              className="w-2 h-2 rounded-full shrink-0"
-              style={{
-                background: subjectColor(s.hue),
-                boxShadow: `0 0 0 2px color-mix(in oklab, ${subjectColor(s.hue)} 20%, transparent)`,
-              }}
-            />
-            <span className="flex-1 truncate">{s.name}</span>
-            <span className="font-mono text-[10.5px] text-text-4">
-              {s.chaptersCount}
-            </span>
-          </Link>
-        ))}
+        {subjects.length === 0 ? (
+          <div className="text-[12px] text-text-4 px-3 py-1 italic">
+            Aucune matière
+          </div>
+        ) : (
+          subjects.map((s) => (
+            <Link
+              key={s.id}
+              href={`/matieres/${s.id}`}
+              className="flex items-center gap-2.5 h-7 px-2.5 mx-1 my-px rounded-md text-[12.5px] text-text-2 hover:bg-bg-2 hover:text-text-1 transition-colors"
+            >
+              <span
+                className="w-2 h-2 rounded-full shrink-0"
+                style={{
+                  background: subjectColor(s.hue),
+                  boxShadow: `0 0 0 2px color-mix(in oklab, ${subjectColor(s.hue)} 20%, transparent)`,
+                }}
+              />
+              <span className="flex-1 truncate">{s.name}</span>
+              <span className="font-mono text-[10.5px] text-text-4">
+                {s.chaptersCount ?? 0}
+              </span>
+            </Link>
+          ))
+        )}
       </div>
 
       {/* Section Espace */}
@@ -115,15 +130,22 @@ export default function Sidebar() {
 
       {/* Footer user */}
       <div className="mt-auto pt-2.5 px-2 border-t border-stroke-1">
-        <div className="flex items-center gap-2.5 p-2 rounded-md cursor-pointer hover:bg-bg-2">
-          <div className="w-[26px] h-[26px] rounded-md bg-gradient-to-br from-[oklch(0.74_0.17_150)] to-[oklch(0.74_0.17_195)] grid place-items-center text-bg-0 font-mono font-bold text-[11px]">
-            ?
-          </div>
-          <div>
-            <div className="text-[12.5px] font-medium text-text-1">Non connecté</div>
-            <div className="text-[10.5px] text-text-3">Se connecter</div>
-          </div>
-        </div>
+        <form action="/api/logout" method="post">
+          <button
+            type="submit"
+            className="w-full flex items-center gap-2.5 p-2 rounded-md cursor-pointer hover:bg-bg-2 text-left"
+          >
+            <div className="w-[26px] h-[26px] rounded-md bg-gradient-to-br from-[oklch(0.74_0.17_150)] to-[oklch(0.74_0.17_195)] grid place-items-center text-bg-0 font-mono font-bold text-[11px] shrink-0">
+              {initials}
+            </div>
+            <div className="min-w-0 flex-1">
+              <div className="text-[12.5px] font-medium text-text-1 truncate">
+                {userEmail ?? "Mon compte"}
+              </div>
+              <div className="text-[10.5px] text-text-3">Se déconnecter</div>
+            </div>
+          </button>
+        </form>
       </div>
     </aside>
   );
